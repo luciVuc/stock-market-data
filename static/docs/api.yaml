@@ -1,0 +1,250 @@
+openapi: 3.0.3
+
+info:
+  title: stock-market-api
+  description: Stock Market Data API
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+  contact:
+    name: Author
+    email: lucian.vuc@gmail.com
+
+servers:
+  - url: "http://0.0.0.0:8000"
+    description: "Localhost"
+
+paths:
+  /api/data/historical:
+    get:
+      description: Get historical intraday and end-of-day market data for all US stocks, including pre and post market data.
+      summary: Historical Stock Market Data
+      operationId: Historical
+      security:
+        - api_key: []
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: object
+            $ref: "#/components/schemas/HistoricalMarketDataQueryProps"
+      responses:
+        200:
+          description: Description
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/HistoricalMarketData"
+
+        404:
+          description: Description
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/GeneralError"
+
+components:
+  schemas:
+    HistoricalMarketDataQueryProps:
+      title: HistoricalMarketDataQueryProps
+      description: The API query properties
+      type: object
+      properties:
+        symbol:
+          type: string
+          description: The symbol of the asset to get data for
+        interval:
+          enum:
+            - 1m
+            - 2m
+            - 5m
+            - 15m
+            - 30m
+            - 60m
+            - 1d
+            - 5d
+            - 1mo
+            - 3mo
+            - 6mo
+            - 1y
+            - 2y
+            - 5y
+            - 10y
+            - ytd
+            - max
+        period1:
+          type: number
+        period2:
+          type: number
+        range:
+          enum:
+            - 1d
+            - 5d
+            - 1mo
+            - 3mo
+            - 6mo
+            - 1y
+            - 2y
+            - 5y
+            - 10y
+            - ytd
+            - max
+        useYfid:
+          type: boolean
+        includePrePost:
+          type: boolean
+        events:
+          type: string
+        lang:
+          type: string
+        region:
+          type: string
+        crumb:
+          type: string
+        corsDomain:
+          type: string
+      required:
+        - symbol
+
+    GeneralError:
+      title: GeneralError
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+
+    APIResponseTradingPeriod:
+      title: APIResponseTradingPeriod
+      type: object
+      properties:
+        timezone:
+          type: string
+        start:
+          type: integer
+        end:
+          type: integer
+        gmtoffset:
+          type: integer
+      required:
+        - timezone
+        - start
+        - end
+        - gmtoffset
+
+    HistoricalMarketDataItem:
+      title: HistoricalMarketDataItem
+      description: A stock data time frame entry
+      type: object
+      properties:
+        open:
+          type: number
+        low:
+          type: number
+        high:
+          type: number
+        close:
+          type: number
+        volume:
+          type: number
+        datetime:
+          type: integer
+      required:
+        - open
+        - low
+        - high
+        - close
+        - volume
+        - datetime
+
+    HistoricalMarketData:
+      title: HistoricalMarketData
+      description: The stock data the API returns
+      type: object
+      properties:
+        interval:
+          type: string
+        currency:
+          type: string
+        symbol:
+          type: string
+        exchangeName:
+          type: string
+        instrumentType:
+          type: string
+        firstTradeDate:
+          type: integer
+        regularMarketTime:
+          type: integer
+        gmtoffset:
+          type: integer
+        timezone:
+          type: string
+        exchangeTimezoneName:
+          type: string
+        regularMarketPrice:
+          type: number
+        chartPreviousClose:
+          type: number
+        priceHint:
+          type: number
+        currentTradingPeriod:
+          type: object
+          properties:
+            pre:
+              type: object
+              $ref: "#/components/schemas/APIResponseTradingPeriod"
+            regular:
+              type: object
+              $ref: "#/components/schemas/APIResponseTradingPeriod"
+            post:
+              type: object
+              $ref: "#/components/schemas/APIResponseTradingPeriod"
+          required:
+            - pre
+            - regular
+            - post
+        dataGranularity:
+          type: string
+        range:
+          type: string
+        validRanges:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            type: object
+            $ref: "#/components/schemas/HistoricalMarketDataItem"
+      required:
+        - interval
+        - currency
+        - symbol
+        - exchangeName
+        - instrumentType
+        - firstTradeDate
+        - regularMarketTime
+        - gmtoffset
+        - timezone
+        - exchangeTimezoneName
+        - regularMarketPrice
+        - chartPreviousClose
+        - priceHint
+        - currentTradingPeriod
+        - dataGranularity
+        - range
+        - validRanges
+        - items
+
+  securitySchemes:
+    api_key:
+      type: apiKey
+      description: API key to authorize requests.
+      name: api-key
+      in: query
