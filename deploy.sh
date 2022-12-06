@@ -4,7 +4,7 @@ cd ../dev
 npm run build
 cd ../prod
 
-git checkout -B master
+git checkout -B main
 
 mkdir -p dist && cp -r ../dev/dist/* dist/
 mkdir -p static && cp -r ../dev/static/* static/
