@@ -1,7 +1,6 @@
 "use strict";
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-require('fix-path')();
 require("colors");
 const app_1 = require("./app");
 const dotenv_1 = require("dotenv");
