@@ -27,7 +27,7 @@ echo 'Production build imported successfuly'
 
 git add .
 git commit -m "update production branch"
-git push -u origin master
+git push -u origin main
 echo 'Production branch updated'
 
 npm install

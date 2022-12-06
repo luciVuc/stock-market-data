@@ -1,25 +1,12 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.shellPathSync = exports.shellPath = exports.shellEnvSync = exports.shellEnv = exports.defaultShell = exports.detectDefaultShell = void 0;
+exports.shellPathSync = exports.shellEnvSync = exports.defaultShell = exports.detectDefaultShell = void 0;
 const node_process_1 = __importDefault(require("node:process"));
-// import {shellPathSync} from 'shell-path';
-// import {shellEnv, shellEnvSync} from 'shell-env';
-// import process from 'node:process';
 const execa_1 = __importDefault(require("execa"));
 const strip_ansi_1 = __importDefault(require("strip-ansi"));
-// import defaultShell from 'default-shell';
 const node_os_1 = require("node:os");
 const detectDefaultShell = () => {
     const { env } = node_process_1.default;
@@ -58,26 +45,21 @@ const parseEnv = (env) => {
     }
     return returnValue;
 };
-function shellEnv(shell) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (node_process_1.default.platform === 'win32') {
-            return node_process_1.default.env;
-        }
-        try {
-            const { stdout } = yield (0, execa_1.default)(shell || exports.defaultShell, args, { env });
-            return parseEnv(stdout);
-        }
-        catch (error) {
-            if (shell) {
-                throw error;
-            }
-            else {
-                return node_process_1.default.env;
-            }
-        }
-    });
-}
-exports.shellEnv = shellEnv;
+// export async function shellEnv(shell?: string) {
+// 	if (process.platform === 'win32') {
+// 		return process.env;
+// 	}
+// 	try {
+// 		const {stdout} = await execa(shell || defaultShell, args, {env});
+// 		return parseEnv(stdout);
+// 	} catch (error) {
+// 		if (shell) {
+// 			throw error;
+// 		} else {
+// 			return process.env;
+// 		}
+// 	}
+// }
 function shellEnvSync(shell) {
     if (node_process_1.default.platform === 'win32') {
         return node_process_1.default.env;
@@ -96,13 +78,10 @@ function shellEnvSync(shell) {
     }
 }
 exports.shellEnvSync = shellEnvSync;
-function shellPath() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { PATH } = yield shellEnv();
-        return PATH;
-    });
-}
-exports.shellPath = shellPath;
+// export async function shellPath() {
+// 	const {PATH} = await shellEnv();
+// 	return PATH;
+// }
 function shellPathSync() {
     const { PATH } = shellEnvSync();
     return PATH;
@@ -113,11 +92,11 @@ function fixPath() {
         return;
     }
     node_process_1.default.env.PATH = // shellPathSync() || 
-    [
-        './node_modules/.bin',
-        '/.nodebrew/current/bin',
-        '/usr/local/bin',
-        node_process_1.default.env.PATH,
-    ].join(':');
+        [
+            './node_modules/.bin',
+            '/.nodebrew/current/bin',
+            '/usr/local/bin',
+            node_process_1.default.env.PATH,
+        ].join(':');
 }
 exports.default = fixPath;
