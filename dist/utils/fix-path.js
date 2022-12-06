@@ -112,7 +112,8 @@ function fixPath() {
     if (node_process_1.default.platform === 'win32') {
         return;
     }
-    node_process_1.default.env.PATH = shellPathSync() || [
+    node_process_1.default.env.PATH = // shellPathSync() || 
+    [
         './node_modules/.bin',
         '/.nodebrew/current/bin',
         '/usr/local/bin',
