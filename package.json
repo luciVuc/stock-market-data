@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node .",
-    "pre-start": "npm run clean && npm run build",
     "restart": "npm start"
   },
   "keywords": [],
