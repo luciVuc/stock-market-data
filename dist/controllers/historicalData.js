@@ -16,7 +16,9 @@ exports.getHistoricalMarketData = void 0;
 const api_1 = require("../api");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 exports.getHistoricalMarketData = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.query);
     const { action, status, payload } = yield (0, api_1.getHistoricalMarketData)(req.query);
+    console.log(action, status, payload);
     res.status(status);
     if (payload instanceof Error) {
         throw payload;
