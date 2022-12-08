@@ -43,7 +43,6 @@ function scrapeHistoricalMarketData(url) {
  * @returns Promise<IHistoricalMarketData> | Error
  */
 const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(['query: ', queryParams]);
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2;
     const now = Date.now();
     const params = {
@@ -96,8 +95,13 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
     if (!(params === null || params === void 0 ? void 0 : params.period1) && !(params === null || params === void 0 ? void 0 : params.period2)) {
         params.range = (queryParams === null || queryParams === void 0 ? void 0 : queryParams.dateRange) || "6mo";
     }
+    console.log(['query: ', queryParams]);
+    console.log(['params: ', params]);
     const urlSearchParams = new URLSearchParams(params);
+    console.log(['urlSearchParams: ', urlSearchParams]);
     const url = new URL(`${BASE_URL.replace(":symbol:", params.symbol)}?${urlSearchParams.toString()}`);
+    console.log(['url: ', url]);
+
     const apiResp = JSON.parse(yield scrapeHistoricalMarketData(url.href));
     if (((_a = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _a === void 0 ? void 0 : _a.error) && !((_b = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _b === void 0 ? void 0 : _b.result)) {
         return { error: (_c = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _c === void 0 ? void 0 : _c.error };
