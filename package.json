@@ -1,10 +1,11 @@
 {
-  "name": "stock-market-api",
+  "name": "stock-market-data",
   "version": "1.0.0",
   "description": "Stock Market Data API",
   "main": "dist/index.js",
   "scripts": {
     "start": "node .",
+    "pre-start": "npm run clean && npm run build",
     "restart": "npm start"
   },
   "keywords": [],
@@ -14,13 +15,10 @@
     "colors": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "electron": "^2.0.18",
-    "execa": "^5.1.1",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "nightmare": "^3.0.2",
     "path": "^0.12.7",
-    "strip-ansi": "^6.0.1",
     "uuid": "^9.0.0"
   }
 }

@@ -22,6 +22,7 @@ npx json -f package.json -I -e "delete this.scripts['test:dev']"
 npx json -f package.json -I -e "delete this.scripts.test"
 npx json -f package.json -I -e "delete this.scripts.prod"
 npx json -f package.json -I -e "delete this.devDependencies"
+npx json -f package.json -I -e "this.name = 'stock-market-data'"
 
 echo 'Production build imported successfuly'
 

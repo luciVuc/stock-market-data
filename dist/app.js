@@ -8,18 +8,8 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 require("colors");
 const path_1 = require("path");
-const fix_path_1 = __importDefault(require("./utils/fix-path"));
 const error_1 = require("./middleware/error");
 const routes_1 = require("./routes");
-(0, fix_path_1.default)();
-// if (process.platform !== 'win32') {
-//   process.env.PATH = [
-//     './node_modules/.bin',
-//     '/.nodebrew/current/bin',
-//     '/usr/local/bin',
-//     process.env.PATH,
-//   ].join(':');
-// }
 const init = (nodeEnv) => {
     const app = (0, express_1.default)();
     app.use(express_1.default.json());
