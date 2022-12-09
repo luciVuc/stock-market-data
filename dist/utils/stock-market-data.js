@@ -22,13 +22,23 @@ function scrapeHistoricalMarketData(url) {
         nightmare =
             nightmare instanceof nightmare_1.default ? nightmare : new nightmare_1.default({ show: false });
         try {
-            const data = yield nightmare
-                .goto(url)
-                .wait("body")
-                .evaluate(() => {
+            // const data = await nightmare
+            //   .goto(url)
+            //   .wait("body")
+            //   .evaluate(() => {
+            //     return JSON.stringify(
+            //       (document as any)?.querySelector("body").innerText
+            //     );
+            //   });
+            // const data = await 
+            const page = nightmare.goto(url);
+            const doc = page.wait("body");
+            const rowData = yield doc.evaluate(function () {
                 return JSON.stringify(document === null || document === void 0 ? void 0 : document.querySelector("body").innerText);
             });
+            const data = (rowData);
             return JSON.parse(data);
+            // return JSON.parse((await data) as string);
         }
         catch (error) {
             return { error };
@@ -95,13 +105,8 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
     if (!(params === null || params === void 0 ? void 0 : params.period1) && !(params === null || params === void 0 ? void 0 : params.period2)) {
         params.range = (queryParams === null || queryParams === void 0 ? void 0 : queryParams.dateRange) || "6mo";
     }
-    console.log(['query: ', queryParams]);
-    console.log(['params: ', params]);
     const urlSearchParams = new URLSearchParams(params);
-    console.log(['urlSearchParams: ', urlSearchParams]);
     const url = new URL(`${BASE_URL.replace(":symbol:", params.symbol)}?${urlSearchParams.toString()}`);
-    console.log(['url: ', url]);
-
     const apiResp = JSON.parse(yield scrapeHistoricalMarketData(url.href));
     if (((_a = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _a === void 0 ? void 0 : _a.error) && !((_b = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _b === void 0 ? void 0 : _b.result)) {
         return { error: (_c = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _c === void 0 ? void 0 : _c.error };
@@ -158,7 +163,6 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
             return arr;
         }, []);
     }
-    console.log(['response: ', historicalMarketData]);
     return historicalMarketData;
 });
 exports.getHistoricalMarketData = getHistoricalMarketData;
