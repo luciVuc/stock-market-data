@@ -21,28 +21,20 @@ function scrapeHistoricalMarketData(url) {
     return __awaiter(this, void 0, void 0, function* () {
         nightmare =
             nightmare instanceof nightmare_1.default ? nightmare : new nightmare_1.default({ show: false });
-        try {
-            // const data = await nightmare
-            //   .goto(url)
-            //   .wait("body")
-            //   .evaluate(() => {
-            //     return JSON.stringify(
-            //       (document as any)?.querySelector("body").innerText
-            //     );
-            //   });
-            // const data = await 
-            const page = nightmare.goto(url);
-            const doc = page.wait("body");
-            const rowData = yield doc.evaluate(function () {
-                return JSON.stringify(document === null || document === void 0 ? void 0 : document.querySelector("body").innerText);
-            });
-            const data = (rowData);
-            return JSON.parse(data);
-            // return JSON.parse((await data) as string);
-        }
-        catch (error) {
-            return { error };
-        }
+        return new Promise((resolve, reject) => {
+            try {
+                nightmare
+                    .goto(url)
+                    .wait("body")
+                    .evaluate(() => document === null || document === void 0 ? void 0 : document.querySelector("body").innerText)
+                    .then((text) => {
+                    resolve(JSON.parse(text));
+                });
+            }
+            catch (error) {
+                reject({ error });
+            }
+        });
     });
 }
 /**
@@ -53,7 +45,6 @@ function scrapeHistoricalMarketData(url) {
  * @returns Promise<IHistoricalMarketData> | Error
  */
 const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2;
     const now = Date.now();
     const params = {
         symbol: queryParams.symbol,
@@ -107,63 +98,70 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
     }
     const urlSearchParams = new URLSearchParams(params);
     const url = new URL(`${BASE_URL.replace(":symbol:", params.symbol)}?${urlSearchParams.toString()}`);
-    const apiResp = JSON.parse(yield scrapeHistoricalMarketData(url.href));
-    if (((_a = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _a === void 0 ? void 0 : _a.error) && !((_b = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _b === void 0 ? void 0 : _b.result)) {
-        return { error: (_c = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _c === void 0 ? void 0 : _c.error };
-    }
-    const apiRespData = (_e = (_d = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _d === void 0 ? void 0 : _d.result) === null || _e === void 0 ? void 0 : _e[0];
-    const historicalMarketData = {};
-    if (params.interval) {
-        historicalMarketData.interval = params.interval;
-    }
-    if (apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) {
-        Object.assign(historicalMarketData, apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta);
-        historicalMarketData.firstTradeDate =
-            ((_f = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _f === void 0 ? void 0 : _f.firstTradeDate) * 10000;
-        historicalMarketData.regularMarketTime =
-            ((_g = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _g === void 0 ? void 0 : _g.regularMarketTime) * 1000;
-        if ((_k = (_j = (_h = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _h === void 0 ? void 0 : _h.currentTradingPeriod) === null || _j === void 0 ? void 0 : _j.pre) === null || _k === void 0 ? void 0 : _k.start) {
-            historicalMarketData.currentTradingPeriod.pre.start =
-                apiRespData.meta.currentTradingPeriod.pre.start * 1000;
-        }
-        if ((_o = (_m = (_l = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _l === void 0 ? void 0 : _l.currentTradingPeriod) === null || _m === void 0 ? void 0 : _m.pre) === null || _o === void 0 ? void 0 : _o.end) {
-            historicalMarketData.currentTradingPeriod.pre.end =
-                apiRespData.meta.currentTradingPeriod.pre.end * 1000;
-        }
-        if ((_r = (_q = (_p = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _p === void 0 ? void 0 : _p.currentTradingPeriod) === null || _q === void 0 ? void 0 : _q.post) === null || _r === void 0 ? void 0 : _r.start) {
-            historicalMarketData.currentTradingPeriod.post.start =
-                apiRespData.meta.currentTradingPeriod.post.start * 1000;
-        }
-        if ((_u = (_t = (_s = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _s === void 0 ? void 0 : _s.currentTradingPeriod) === null || _t === void 0 ? void 0 : _t.post) === null || _u === void 0 ? void 0 : _u.end) {
-            historicalMarketData.currentTradingPeriod.post.end =
-                apiRespData.meta.currentTradingPeriod.post.end * 1000;
-        }
-        if ((_x = (_w = (_v = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _v === void 0 ? void 0 : _v.currentTradingPeriod) === null || _w === void 0 ? void 0 : _w.regular) === null || _x === void 0 ? void 0 : _x.start) {
-            historicalMarketData.currentTradingPeriod.regular.start =
-                apiRespData.meta.currentTradingPeriod.regular.start * 1000;
-        }
-        if ((_0 = (_z = (_y = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _y === void 0 ? void 0 : _y.currentTradingPeriod) === null || _z === void 0 ? void 0 : _z.regular) === null || _0 === void 0 ? void 0 : _0.end) {
-            historicalMarketData.currentTradingPeriod.regular.end =
-                apiRespData.meta.currentTradingPeriod.regular.end * 1000;
-        }
-    }
-    const quote = (_2 = (_1 = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.indicators) === null || _1 === void 0 ? void 0 : _1.quote) === null || _2 === void 0 ? void 0 : _2[0];
-    const timestamps = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.timestamp;
-    if (quote && (timestamps === null || timestamps === void 0 ? void 0 : timestamps.length)) {
-        historicalMarketData.items = timestamps.reduce((arr, item, i) => {
-            var _a, _b, _c, _d, _e;
-            arr.push({
-                open: (_a = quote.open) === null || _a === void 0 ? void 0 : _a[i],
-                low: (_b = quote.low) === null || _b === void 0 ? void 0 : _b[i],
-                high: (_c = quote.high) === null || _c === void 0 ? void 0 : _c[i],
-                close: (_d = quote.close) === null || _d === void 0 ? void 0 : _d[i],
-                volume: (_e = quote.volume) === null || _e === void 0 ? void 0 : _e[i],
-                datetime: item * 1000,
-            });
-            return arr;
-        }, []);
-    }
-    return historicalMarketData;
+    return new Promise((resolve, reject) => {
+        scrapeHistoricalMarketData(url.href).then((resp) => {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2;
+            const apiResp = resp;
+            if (((_a = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _a === void 0 ? void 0 : _a.error) && !((_b = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _b === void 0 ? void 0 : _b.result)) {
+                return { error: (_c = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _c === void 0 ? void 0 : _c.error };
+            }
+            const apiRespData = (_e = (_d = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _d === void 0 ? void 0 : _d.result) === null || _e === void 0 ? void 0 : _e[0];
+            const historicalMarketData = {};
+            if (params.interval) {
+                historicalMarketData.interval = params.interval;
+            }
+            if (apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) {
+                Object.assign(historicalMarketData, apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta);
+                historicalMarketData.firstTradeDate =
+                    ((_f = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _f === void 0 ? void 0 : _f.firstTradeDate) * 10000;
+                historicalMarketData.regularMarketTime =
+                    ((_g = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _g === void 0 ? void 0 : _g.regularMarketTime) * 1000;
+                if ((_k = (_j = (_h = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _h === void 0 ? void 0 : _h.currentTradingPeriod) === null || _j === void 0 ? void 0 : _j.pre) === null || _k === void 0 ? void 0 : _k.start) {
+                    historicalMarketData.currentTradingPeriod.pre.start =
+                        apiRespData.meta.currentTradingPeriod.pre.start * 1000;
+                }
+                if ((_o = (_m = (_l = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _l === void 0 ? void 0 : _l.currentTradingPeriod) === null || _m === void 0 ? void 0 : _m.pre) === null || _o === void 0 ? void 0 : _o.end) {
+                    historicalMarketData.currentTradingPeriod.pre.end =
+                        apiRespData.meta.currentTradingPeriod.pre.end * 1000;
+                }
+                if ((_r = (_q = (_p = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _p === void 0 ? void 0 : _p.currentTradingPeriod) === null || _q === void 0 ? void 0 : _q.post) === null || _r === void 0 ? void 0 : _r.start) {
+                    historicalMarketData.currentTradingPeriod.post.start =
+                        apiRespData.meta.currentTradingPeriod.post.start * 1000;
+                }
+                if ((_u = (_t = (_s = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _s === void 0 ? void 0 : _s.currentTradingPeriod) === null || _t === void 0 ? void 0 : _t.post) === null || _u === void 0 ? void 0 : _u.end) {
+                    historicalMarketData.currentTradingPeriod.post.end =
+                        apiRespData.meta.currentTradingPeriod.post.end * 1000;
+                }
+                if ((_x = (_w = (_v = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _v === void 0 ? void 0 : _v.currentTradingPeriod) === null || _w === void 0 ? void 0 : _w.regular) === null || _x === void 0 ? void 0 : _x.start) {
+                    historicalMarketData.currentTradingPeriod.regular.start =
+                        apiRespData.meta.currentTradingPeriod.regular.start * 1000;
+                }
+                if ((_0 = (_z = (_y = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.meta) === null || _y === void 0 ? void 0 : _y.currentTradingPeriod) === null || _z === void 0 ? void 0 : _z.regular) === null || _0 === void 0 ? void 0 : _0.end) {
+                    historicalMarketData.currentTradingPeriod.regular.end =
+                        apiRespData.meta.currentTradingPeriod.regular.end * 1000;
+                }
+            }
+            const quote = (_2 = (_1 = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.indicators) === null || _1 === void 0 ? void 0 : _1.quote) === null || _2 === void 0 ? void 0 : _2[0];
+            const timestamps = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.timestamp;
+            if (quote && (timestamps === null || timestamps === void 0 ? void 0 : timestamps.length)) {
+                historicalMarketData.items = timestamps.reduce((arr, item, i) => {
+                    var _a, _b, _c, _d, _e;
+                    arr.push({
+                        open: (_a = quote.open) === null || _a === void 0 ? void 0 : _a[i],
+                        low: (_b = quote.low) === null || _b === void 0 ? void 0 : _b[i],
+                        high: (_c = quote.high) === null || _c === void 0 ? void 0 : _c[i],
+                        close: (_d = quote.close) === null || _d === void 0 ? void 0 : _d[i],
+                        volume: (_e = quote.volume) === null || _e === void 0 ? void 0 : _e[i],
+                        datetime: item * 1000,
+                    });
+                    return arr;
+                }, []);
+            }
+            resolve(historicalMarketData);
+        }).catch((error) => {
+            reject(error);
+        });
+    });
 });
 exports.getHistoricalMarketData = getHistoricalMarketData;
 exports.default = exports.getHistoricalMarketData;
