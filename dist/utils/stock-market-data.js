@@ -14,13 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHistoricalMarketData = void 0;
 const nightmare_1 = __importDefault(require("nightmare"));
+const path_1 = require("path");
 const DATE_REGX = /^([0-9]{4}-[0-9]{2}-[0-9]{2})([A-Z]+([0-9]{2}:[0-9]{2}:[0-9]{2}).([0-9+-:]+))*$/g;
 const BASE_URL = "https://query1.finance.yahoo.com/v8/finance/chart/:symbol:";
 let nightmare;
 function scrapeHistoricalMarketData(url) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log((0, path_1.join)(__dirname, '../../node_modules/electron'));
         nightmare =
-            nightmare instanceof nightmare_1.default ? nightmare : new nightmare_1.default({ show: false });
+            nightmare instanceof nightmare_1.default ? nightmare : new nightmare_1.default({
+                show: false,
+                electronPath: require('../../node_modules/electron')
+            });
         return new Promise((resolve, reject) => {
             try {
                 nightmare
@@ -29,6 +34,9 @@ function scrapeHistoricalMarketData(url) {
                     .evaluate(() => document === null || document === void 0 ? void 0 : document.querySelector("body").innerText)
                     .then((text) => {
                     resolve(JSON.parse(text));
+                })
+                    .catch((error) => {
+                    reject({ error });
                 });
             }
             catch (error) {
@@ -99,7 +107,8 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
     const urlSearchParams = new URLSearchParams(params);
     const url = new URL(`${BASE_URL.replace(":symbol:", params.symbol)}?${urlSearchParams.toString()}`);
     return new Promise((resolve, reject) => {
-        scrapeHistoricalMarketData(url.href).then((resp) => {
+        scrapeHistoricalMarketData(url.href)
+            .then((resp) => {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2;
             const apiResp = resp;
             if (((_a = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _a === void 0 ? void 0 : _a.error) && !((_b = apiResp === null || apiResp === void 0 ? void 0 : apiResp.chart) === null || _b === void 0 ? void 0 : _b.result)) {
@@ -158,7 +167,8 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
                 }, []);
             }
             resolve(historicalMarketData);
-        }).catch((error) => {
+        })
+            .catch((error) => {
             reject(error);
         });
     });
