@@ -15,17 +15,20 @@ const init = (nodeEnv) => {
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: false }));
     app.use((0, cors_1.default)());
-    app.use("/api/data", routes_1.historicalMarketDataRoutes);
-    app.use("/api/data", routes_1.pingRoutes);
-    app.use("/api/data", routes_1.catchAllRoutes);
-    app.use("/api", routes_1.pingRoutes);
-    app.use(express_1.default.static((0, path_1.resolve)(__dirname, "..", "static")));
+    app.use("/api/data", routes_1.historicalMarketDataRoute);
+    app.use("/api/data", routes_1.docsRoute);
+    app.use("/api/data", routes_1.pingRoute);
+    app.use("/api/data", routes_1.catchAllRoute);
+    app.use("/api", routes_1.docsRoute);
+    app.use("/api", routes_1.pingRoute);
+    app.use(express_1.default.static((0, path_1.resolve)(__dirname, "..", "static", "public")));
     app.get("/", (request, response) => {
         return response
             .status(200)
-            .sendFile((0, path_1.resolve)(__dirname, "..", "static", "index.html"));
+            .sendFile((0, path_1.resolve)(__dirname, "..", "static", "public", "index.html"));
     });
-    app.use("/", routes_1.pingRoutes);
+    app.use("/", routes_1.docsRoute);
+    app.use("/", routes_1.pingRoute);
     app.use(error_1.errorHandler);
     return app;
 };

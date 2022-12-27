@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./historicalData"), exports);
 __exportStar(require("./catchAll"), exports);
 __exportStar(require("./ping"), exports);
+__exportStar(require("./docs"), exports);
