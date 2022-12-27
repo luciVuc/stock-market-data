@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="icon" type="image/svg" href="/favicon.svg" sizes="32x32" />
+    <link rel="icon" type="image/svg" href="/favicon.svg" sizes="16x16" />
+
+    <!-- <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script> -->
+    <script
+      type="text/javascript"
+      src="https://canvasjs.com/assets/script/canvasjs.stock.min.js"
+    ></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        const candlesticks = [];
+        const volumes = [];
+
+        var stockChart = new CanvasJS.StockChart("chartContainer", {
+          title: {
+            text: "StockChart Title",
+          },
+          charts: [
+            {
+              data: [
+                {
+                  type: "candlestick", //Change it to "spline", "area", "column"
+                  dataPoints: candlesticks,
+                },
+              ],
+            },
+            {
+              data: [
+                {
+                  type: "column",
+                  dataPoints: volumes,
+                },
+              ],
+            },
+          ],
+          navigator: {
+            slider: {
+              minimum: new Date(2018, 04, 01),
+              maximum: new Date(2018, 06, 01),
+            },
+          },
+        });
+
+        fetch("/api/data/historical?symbol=tsla&range=6mo")
+          .then((resp) => resp.json())
+          .then((data) => {
+            const points = data?.payload?.items || [];
+            for (let point, date, i = 0; i < points.length; i++) {
+              point = points[i];
+              date = new Date(point.datetime);
+              candlesticks.push({
+                x: date,
+                y: [
+                  Number(point.open),
+                  Number(point.high),
+                  Number(point.low),
+                  Number(point.close),
+                ],
+              });
+              volumes.push({
+                x: date,
+                y: Number(point.volume),
+              });
+            }
+            stockChart.render();
+          });
+      };
+    </script>
+  </head>
+  <body>
+    <div id="chartContainer" style="height: 800px; width: 100%"></div>
+  </body>
+</html>

@@ -20,6 +20,6 @@ exports.docs = (0, express_async_handler_1.default)((req, res) => __awaiter(void
     const status = 200;
     return res
         .status(status)
-        .sendFile((0, path_1.resolve)("static", "docs/index.html"));
+        .sendFile((0, path_1.resolve)("static", "public", "docs/index.html"));
 }));
 exports.default = { docs: exports.docs };
