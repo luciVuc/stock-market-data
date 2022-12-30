@@ -8,14 +8,14 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 require("colors");
 const path_1 = require("path");
-const error_1 = require("./middleware/error");
+const middleware_1 = require("./middleware");
 const routes_1 = require("./routes");
 const init = (nodeEnv) => {
     const app = (0, express_1.default)();
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: false }));
     app.use((0, cors_1.default)());
-    app.use("/api/data", routes_1.historicalMarketDataRoute);
+    app.use("/api/data", routes_1.marketDataRoute);
     app.use("/api/data", routes_1.docsRoute);
     app.use("/api/data", routes_1.pingRoute);
     app.use("/api/data", routes_1.catchAllRoute);
@@ -29,7 +29,7 @@ const init = (nodeEnv) => {
     });
     app.use("/", routes_1.docsRoute);
     app.use("/", routes_1.pingRoute);
-    app.use(error_1.errorHandler);
+    app.use(middleware_1.errorHandler);
     return app;
 };
 exports.init = init;

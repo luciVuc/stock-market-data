@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.docs = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const path_1 = require("path");
-// app.use(express.static(resolve(__dirname, "..", "static")));
 exports.docs = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const status = 200;
     return res

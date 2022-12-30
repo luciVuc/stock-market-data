@@ -16,11 +16,11 @@ servers:
     description: "Localhost"
 
 paths:
-  /api/data/historical:
+  /api/data/market:
     get:
-      description: Get historical intraday and end-of-day market data for all US stocks, including pre and post market data.
-      summary: Historical Stock Market Data
-      operationId: Historical
+      description: Get intraday and end-of-day market data for all US stocks, including pre and post market data.
+      summary: Stock Market Data
+      operationId: market_data
       security:
         - api_key: []
       parameters:
@@ -28,7 +28,7 @@ paths:
           name: query
           schema:
             type: object
-            $ref: "#/components/schemas/HistoricalMarketDataQueryProps"
+            $ref: "#/components/schemas/MarketDataQueryProps"
       responses:
         200:
           description: Description
@@ -36,7 +36,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "#/components/schemas/HistoricalMarketData"
+                $ref: "#/components/schemas/MarketData"
 
         404:
           description: Description
@@ -48,8 +48,8 @@ paths:
 
 components:
   schemas:
-    HistoricalMarketDataQueryProps:
-      title: HistoricalMarketDataQueryProps
+    MarketDataQueryProps:
+      title: MarketDataQueryProps
       description: The API query properties
       type: object
       properties:
@@ -131,8 +131,8 @@ components:
         message:
           type: string
 
-    APIResponseTradingPeriod:
-      title: APIResponseTradingPeriod
+    TradingPeriod:
+      title: TradingPeriod
       type: object
       properties:
         timezone:
@@ -149,8 +149,8 @@ components:
         - end
         - gmtoffset
 
-    HistoricalMarketDataItem:
-      title: HistoricalMarketDataItem
+    MarketDataPoint:
+      title: MarketDataPoint
       description: A stock data time frame entry
       type: object
       properties:
@@ -174,8 +174,8 @@ components:
         - volume
         - timestamp
 
-    HistoricalMarketData:
-      title: HistoricalMarketData
+    MarketData:
+      title: MarketData
       description: The stock data the API returns
       type: object
       properties:
@@ -210,13 +210,13 @@ components:
           properties:
             pre:
               type: object
-              $ref: "#/components/schemas/APIResponseTradingPeriod"
+              $ref: "#/components/schemas/TradingPeriod"
             regular:
               type: object
-              $ref: "#/components/schemas/APIResponseTradingPeriod"
+              $ref: "#/components/schemas/TradingPeriod"
             post:
               type: object
-              $ref: "#/components/schemas/APIResponseTradingPeriod"
+              $ref: "#/components/schemas/TradingPeriod"
           required:
             - pre
             - regular
@@ -229,11 +229,11 @@ components:
           type: array
           items:
             type: string
-        items:
+        dataPoints:
           type: array
           items:
             type: object
-            $ref: "#/components/schemas/HistoricalMarketDataItem"
+            $ref: "#/components/schemas/MarketDataPoint"
       required:
         - interval
         - currency
@@ -252,7 +252,7 @@ components:
         - dataGranularity
         - range
         - validRanges
-        - items
+        - dataPoints
 
   securitySchemes:
     api_key:
