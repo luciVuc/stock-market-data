@@ -25,7 +25,7 @@ function scrapeHistoricalMarketData(url) {
             const data = yield nightmare
                 .goto(url)
                 .wait("body")
-                .evaluate(() => (document === null || document === void 0 ? void 0 : document.querySelector("body").innerText));
+                .evaluate(() => document === null || document === void 0 ? void 0 : document.querySelector("body").innerText);
             return JSON.parse(data);
         }
         catch (error) {
@@ -42,22 +42,21 @@ function scrapeHistoricalMarketData(url) {
  */
 const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2;
-    const now = Date.now();
     const params = {
         symbol: queryParams.symbol,
-        interval: (queryParams === null || queryParams === void 0 ? void 0 : queryParams.interval) || "1d",
+        interval: queryParams.interval || "1d",
         useYfid: "true",
-        includePrePost: (queryParams === null || queryParams === void 0 ? void 0 : queryParams.includePrePost)
-            ? String(queryParams === null || queryParams === void 0 ? void 0 : queryParams.includePrePost)
+        includePrePost: queryParams.includePrePost
+            ? String(queryParams.includePrePost)
             : "true",
-        events: (queryParams === null || queryParams === void 0 ? void 0 : queryParams.events) || "div|split|earn",
-        lang: (queryParams === null || queryParams === void 0 ? void 0 : queryParams.lang) || "en-US",
-        region: (queryParams === null || queryParams === void 0 ? void 0 : queryParams.region) || "US",
+        events: queryParams.events || "div|split|earn",
+        lang: queryParams.lang || "en-US",
+        region: queryParams.region || "US",
         crumb: "Qb/5GAR93Rf",
         corsDomain: "finance.yahoo.com",
     };
-    if (queryParams === null || queryParams === void 0 ? void 0 : queryParams.startDate) {
-        const startDate = DATE_REGX.test(queryParams === null || queryParams === void 0 ? void 0 : queryParams.startDate)
+    if (queryParams.startDate) {
+        const startDate = DATE_REGX.test(queryParams.startDate)
             ? queryParams.startDate
             : parseInt(queryParams.startDate);
         if (typeof startDate === "string") {
@@ -73,11 +72,10 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
             }
         }
     }
-    if (queryParams === null || queryParams === void 0 ? void 0 : queryParams.endDate) {
-        const endDate = DATE_REGX.test(queryParams === null || queryParams === void 0 ? void 0 : queryParams.endDate)
+    if (queryParams.endDate) {
+        const endDate = DATE_REGX.test(queryParams.endDate)
             ? queryParams.endDate
             : parseInt(queryParams.endDate);
-        console.log(endDate.toString());
         if (typeof endDate === "string") {
             params.period2 = String(parseInt(String(Number(new Date(endDate)) / 1000)));
         }
@@ -90,8 +88,8 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
             }
         }
     }
-    if (!(params === null || params === void 0 ? void 0 : params.period1) && !(params === null || params === void 0 ? void 0 : params.period2)) {
-        params.range = (queryParams === null || queryParams === void 0 ? void 0 : queryParams.dateRange) || "6mo";
+    if (!params.period1 && !params.period2) {
+        params.range = queryParams.dateRange || "6mo";
     }
     const urlSearchParams = new URLSearchParams(params);
     const url = new URL(`${BASE_URL.replace(":symbol:", params.symbol)}?${urlSearchParams.toString()}`);
@@ -138,7 +136,7 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
     const quote = (_2 = (_1 = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.indicators) === null || _1 === void 0 ? void 0 : _1.quote) === null || _2 === void 0 ? void 0 : _2[0];
     const timestamps = apiRespData === null || apiRespData === void 0 ? void 0 : apiRespData.timestamp;
     if (quote && (timestamps === null || timestamps === void 0 ? void 0 : timestamps.length)) {
-        historicalMarketData.items = timestamps.reduce((arr, item, i) => {
+        historicalMarketData.dataPoints = timestamps.reduce((arr, item, i) => {
             var _a, _b, _c, _d, _e;
             arr.push({
                 open: (_a = quote.open) === null || _a === void 0 ? void 0 : _a[i],
@@ -146,7 +144,7 @@ const getHistoricalMarketData = (queryParams) => __awaiter(void 0, void 0, void 
                 high: (_c = quote.high) === null || _c === void 0 ? void 0 : _c[i],
                 close: (_d = quote.close) === null || _d === void 0 ? void 0 : _d[i],
                 volume: (_e = quote.volume) === null || _e === void 0 ? void 0 : _e[i],
-                datetime: item * 1000
+                timestamp: item * 1000,
             });
             return arr;
         }, []);

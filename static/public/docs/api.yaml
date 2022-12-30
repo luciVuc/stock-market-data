@@ -75,11 +75,11 @@ components:
             - 10y
             - ytd
             - max
-        period1:
-          type: number
-        period2:
-          type: number
-        range:
+        startDate:
+          type: string
+        endDate:
+          type: string
+        dateRange:
           enum:
             - 1d
             - 5d
@@ -97,15 +97,27 @@ components:
         includePrePost:
           type: boolean
         events:
-          type: string
+          enum:
+            - div
+            - split
+            - earn
+            - div|split|earn
         lang:
           type: string
         region:
-          type: string
-        crumb:
-          type: string
-        corsDomain:
-          type: string
+          enum:
+            - US
+            - BR
+            - AU
+            - CA
+            - FR
+            - DE
+            - HK
+            - IN
+            - IT
+            - ES
+            - GB
+            - SG
       required:
         - symbol
 
@@ -152,7 +164,7 @@ components:
           type: number
         volume:
           type: number
-        datetime:
+        timestamp:
           type: integer
       required:
         - open
@@ -160,7 +172,7 @@ components:
         - high
         - close
         - volume
-        - datetime
+        - timestamp
 
     HistoricalMarketData:
       title: HistoricalMarketData
