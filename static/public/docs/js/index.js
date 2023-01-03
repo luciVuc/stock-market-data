@@ -1,3 +1,5 @@
+const { SwaggerUIBundle, SwaggerUIStandalonePreset, YAML } = window;
+
 function buildSwaggerUI(jsonSpec) {
   return SwaggerUIBundle({
     spec: jsonSpec,

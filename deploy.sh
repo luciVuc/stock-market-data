@@ -7,7 +7,9 @@ cd ../prod
 git checkout -B main
 
 mkdir -p dist && cp -r ../dev/dist/* dist/
-mkdir -p static && cp -r ../dev/static/* static/
+mkdir -p static && mkdir -p build && cp -r ../dev/static/build/* static/build
+mkdir -p static && mkdir -p public && cp -r ../dev/static/public/* static/public
+cp ../dev/static/package.json static/package.json
 cp ../dev/package.json package.json
 
 # npm pkg delete devDependencies
@@ -30,5 +32,8 @@ git commit -m "update production branch"
 git push -u origin main
 echo 'Production branch updated'
 
+cd static
+npm install
+cd ..
 npm install
 echo 'Install production dependencies'
