@@ -7,7 +7,8 @@ cd ../prod
 git checkout -B main
 
 mkdir -p dist && cp -r ../dev/dist/* dist/
-mkdir -p static && mkdir -p build && cp -r ../dev/static/build/* static/build
+mkdir -p static 
+mkdir -p static/build && cp -r ../dev/static/build/* static/build
 mkdir -p static/public && cp -r ../dev/static/public/* static/public
 cp ../dev/static/package.json static/package.json
 cp ../dev/package.json package.json
